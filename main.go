@@ -25,12 +25,19 @@ func main() {
 func cycleDays(balls int) (days int, ms time.Duration, err error) {
 	start := time.Now()
 
-	bc := ballclock.CreateBallClock(balls)
-	startingMain := bc.Main.Balls
+	bc, err := ballclock.CreateBallClock(balls)
+	if err != nil {
+		return 0, time.Duration(0), err
+	}
+	startingMain := make([]int, balls)
+	copy(startingMain, bc.Main.Balls)
 	minutes := 1
 	bc.Tick()
 	for !bc.Cycled(startingMain) {
-		bc.Tick()
+		err = bc.Tick()
+		if err != nil {
+			return 0, time.Duration(0), err
+		}
 		minutes++
 	}
 	days = minutes / 60 / 24
@@ -49,7 +56,10 @@ func clockState(balls, minutes int) ([]byte, error) {
 
 func calculateClockState(balls, minutes int) (bc *ballclock.BallClock,
 	err error) {
-	bc = ballclock.CreateBallClock(balls)
+	bc, err = ballclock.CreateBallClock(balls)
+	if err != nil {
+		return nil, err
+	}
 	for i := 0; i < minutes; i++ {
 		err := bc.Tick()
 		if err != nil {
