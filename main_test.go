@@ -22,7 +22,6 @@ func TestBallClock(t *testing.T) {
 }
 
 func TestCycleDays(t *testing.T) {
-	// TODO: Make this method simpler, since it's just doing one thing
 	t.Run("input: 30", func(t *testing.T) {
 		result, duration, err := cycleDays(30)
 		if err != nil {
